@@ -1,4 +1,3 @@
-
 <?php
 $con = mysqli_connect("localhost","root","",'fpmsdb');
     if (!$con) { // No connection
@@ -19,7 +18,7 @@ else{
     echo "</ul>";
 }
 function getit($name,$id,$row,$con){
-    echo '<li id="'.$id.'"><input type="checkbox" value="'.$id.'" id="'.$id.'" onclick="select('.$id.')">'.$name."</li>";
+    echo '<li id="'.$id.'"><input type="radio" name="radi" value="'.$id.'" id="'.$id.'" onclick="selected('.$id.')">'.$name."</li>";
     $sql1 = "SELECT * FROM departments WHERE Dsuper = ".$id;
     $result= mysqli_query($con, $sql1);
     echo "<ul>";
@@ -29,3 +28,6 @@ function getit($name,$id,$row,$con){
     echo "</ul>";
 }
 ?>
+
+
+

@@ -24,8 +24,14 @@ if(isset($_FILES['file'])){
                     $Name = mysqli_real_escape_string($conn,$worksheet->getCellByColumnAndRow(2,$row)->getValue());
                     $eid = mysqli_real_escape_string($conn,$worksheet->getCellByColumnAndRow(3,$row)->getValue());
                     $pn = mysqli_real_escape_string($conn,$worksheet->getCellByColumnAndRow(4,$row)->getValue());
-                    $did = mysqli_real_escape_string($conn,$worksheet->getCellByColumnAndRow(5,$row)->getValue());
-                   $sql = "INSERT INTO userdata (UID,CN,Name,EID,PN,DID) VALUES ('".$uid."', '".$cn."','".$Name."','".$eid."','".$pn."','".$did."')";
+                    $DOB = mysqli_real_escape_string($conn,$worksheet->getCellByColumnAndRow(5,$row)->getValue());
+                    $DOE = mysqli_real_escape_string($conn,$worksheet->getCellByColumnAndRow(6,$row)->getValue());
+                    $add = mysqli_real_escape_string($conn,$worksheet->getCellByColumnAndRow(7,$row)->getValue());
+                    $nation = mysqli_real_escape_string($conn,$worksheet->getCellByColumnAndRow(8,$row)->getValue());
+                    $city = mysqli_real_escape_string($conn,$worksheet->getCellByColumnAndRow(9,$row)->getValue());
+                    $state = mysqli_real_escape_string($conn,$worksheet->getCellByColumnAndRow(10,$row)->getValue());
+                    $pass = mysqli_real_escape_string($conn,$worksheet->getCellByColumnAndRow(11,$row)->getValue());
+                   $sql = "INSERT INTO employee (userID,CN,name,email,mobileNo,DOB,DOE,address,nationality,city,state,password) VALUES ('".$uid."', '".$cn."','".$Name."','".$eid."','".$pn."','".$DOB."','".$DOE."','".$add."','".$nation."','".$city."','".$state."','".$pass."')";
                    mysqli_query($conn,$sql);
                 }
             }

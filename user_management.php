@@ -58,8 +58,6 @@ $(document).on('click','#btn-add',function(){
     var name = document.getElementById("name").value;
     var CN = document.getElementById("CN").value;
     var title = document.getElementById("title").value;
-    var department = document.getElementById("department").value;
-    var adminType = document.getElementById("adminType").value;
     var mon = document.getElementById("mon").value;
     var off_Tel = document.getElementById("off_Tel").value;
     var email = document.getElementById("email").value;
@@ -73,11 +71,17 @@ $(document).on('click','#btn-add',function(){
     var RFC = document.getElementById("RFC").value;
     var DOB = document.getElementById("DOB").value;
     var DOE = document.getElementById("DOE").value;
+    
+    
+    $get_dept_query = "SELECT department FROM employee"
+    if(department)
+    
+    
     console.log();
       $.ajax({
           url: "insert.php",
           method:"POST",
-          data: {uid:uid, CN:CN, name:name, email:email, title:title, department:department, mon:mon, off_Tel:off_Tel, address:address, city:city, state:state, nationality:nationality, PO:PO, FC:FC, LFC:LFC, RFC:RFC, DOB:DOB, DOE:DOE, adminType:adminType},
+          data: {uid:uid, CN:CN, name:name, email:email, title:title, mon:mon, off_Tel:off_Tel, address:address, city:city, state:state, nationality:nationality, PO:PO, FC:FC, LFC:LFC, RFC:RFC, DOB:DOB, DOE:DOE},
           dataType:"text",
           success:function(data){
               alert(data);
@@ -105,8 +109,6 @@ $(document).on('click','#btn-add',function(){
         <span class="input_text"><input type="text" class="form-control" id="CN" placeholder="Card No"></span>
         <span class="input_text"><input type="text" class="form-control" id="name" placeholder="Name"></span>
         <span class="input_text"><input type="text" class="form-control" id="title" placeholder="Title"></span>
-        <span class="input_text"><input type="text" class="form-control" id="department" placeholder="Department"></span>
-        <span class="input_text"><input type="text" class="form-control" id="adminType" placeholder="Administrator Type"></span>
         <span class="input_text"><input type="text" class="form-control" id="mon" placeholder="Mobile No"></span>
         <span class="input_text"><input type="text" class="form-control" id="off_Tel" placeholder="Office Tel."></span>
         <span class="input_text"><input type="text" class="form-control" id="email" placeholder="Email"></span>

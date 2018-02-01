@@ -1,30 +1,66 @@
-<?php 
-require('links.php');
-?>
-</head>
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <title>Unimainbech.com</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script src="jquery-1.12.3.min.js"></script>
 
-<script>
-    var qux = 0;  
-    var row_sel;
-    var row_num;
-    function showUpload(){
-        console.log("upload");
-        document.getElementById('upload_file').style.display = "block";
-    }
-    function fetch_data(){
-        $.ajax(
-        {
-            url:"get-leave-info.php",
-            method:"POST",
-            success:function(data){
-                $('#live_data').html(data);
-                $('#live_data').show();
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="bootstrap-3.3.6/dist/css/bootstrap.min.css">
+
+        <!-- Latest compiled and minified JavaScript -->
+        <script src="bootstrap-3.3.6/dist/js/bootstrap.min.js" ></script>
+
+        <!-- Optional theme -->
+        <link rel="stylesheet" href="bootstrap-3.3.6/dist/css/bootstrap-theme.min.css">
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <!-- Essential Logical PHP -->
+    <!-- /Ending Essential Logical PHP -->
+    <!-- Scripts -->
+    <script>
+        var qux = 0;  
+        var cur_ad = 0;
+        var now = 6;
+        
+        function fetch_ads(cur_ad){
+            //Setting variable now!
+            $.ajax(
+                {
+                url:"fetch-ads.php",
+                method:"POST",
+                data: {cur_ad:cur_ad},
+                dataType:"text",
+                method:"POST",
+                success:function(data){
+                    if(data == "0"){
+                        $('#ad_place').append("<p>There are no more ads at the moment</p>");
+                           //In case there are no ads in the database no need to keep calling the function
+                    }
+                    else{
+                        $('#ad_place').append(data);
+                    }
+                }
+            });
+        }
+        
+        $(window).scroll(function() {
+            if($(window).scrollTop() + $(window).height() > $(document).height() - 100 && (cur_ad-4)<=now) {
+                $.ajax({
+                    url:"fetch-details.php",
+                    method:"POST",
+                    success:function(data){
+                        now = data;
+                    }
+                });
+                fetch_ads(cur_ad);
+                cur_ad+=5;
             }
         });
         
-    }
-    
-    
+        
+  /*  
     //Function Called When an employee is selected form the search results
     function employee_selected(){
         var sid=[];
@@ -69,10 +105,10 @@ require('links.php');
     
     
     
-    
+    */
     $(document).ready(function(){
-        fetch_data();
-        
+     //   fetch_ads();
+      /*  
         // When Issue Leave button is pressed do the following
         var foo = 0;
         $("#issue").click(function(){
@@ -118,8 +154,10 @@ require('links.php');
              }
          });
 
-
+    */
     });
+        
+    /*    
     $(document).on('click','#btn-add',function(){
         var from = document.getElementById("from_field").value;
         var to = document.getElementById("to_field").value;
@@ -186,46 +224,84 @@ require('links.php');
         $("#add_leave").show();
         $("#search_results").show();
     });
+      */  
+    </script>
+    <!-- |Scripts| -->
     
     
     
-</script>
-<body>
     
-    <!-- NAV -->
-<?php 
-    require('navbar_admin.php');
-    ?>
-<!-- NAV -->
-<h2 align="center">Leave Management</h2>
-    <div class="container">
-        <div>
-            <button type="button" class="btn btn-primary" id="issue" style="float:right; margin-right:20px;">Issue Leave</button>
-            <button type="button" class="btn btn-danger" id="btn-delete" style="float:right; margin-right:20px; display:none;">Remove Leave</button>
-            
-            <input type="text" class="form-control" id="search_string" placeholder="Search" style="display:none; margin-right:10px; width:45%; float:left;">
-            <button type ="button" class="btn btn-primary" id="search" style="width:10% margin-right:10px; display:none;">Search</button>
-            
-        </div>
-        </br>
-        <div class="container" id="search_results"></div>
-            <div id="add_leave" class="form" style="display:none">
-                <span class="date_picker" style="margin-right:10px;">From:<input type="date" name="From" id="from_field" required autofocus ></span>
-                <span class="date_picker" style="margin-right:10px;">To:<input type="date" name="To" id="to_field" required autofocus ></span>
-                <span class="input_text"><input type = "text" class = "form-control" 
-                name = "IBy" id="IssuedBy" placeholder = "Issued By" 
-                required autofocus style="margin-right:10px;"></span>
-                <span class="input_text"><input type = "text" class = "form-control" 
-                name = "Reason" id="Reason" placeholder = "Reason" 
-                required autofocus style="margin-right:10px;"></span>
-                <span class="input_text" >Class:<select id="leave_classes" style="margin-right:10px;"></select></span>
+    <!-- Body -->
+    <body>
+        <!-- Navbar -->
+        <nav class="navbar navbar-inverse">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                  <a class="navbar-brand" href="#">UniMainBech.com</a>
+                </div>
+                <ul class="nav navbar-nav">
+                  <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Universities<span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                      <li><a href="nust.php">NUST</a></li>
+                      <li><a href="fast.php">FAST</a></li>
+                    </ul>
+                  </li>
+                  <li><a href="categories.php">Categories</a></li>
+                </ul>
             </div>
-            <button type="button" class="btn btn-primary" id="btn-add" style=" width:10% margin-right:10px; display:none;">Add</button>
+        </nav>
+         <!-- Navbar -->
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-2">
+                    <img src="dp/1.png">
+                </div>
+                
+                <div class="col-xs-10">
+                    <p>Welcome to UNI main Bech. We are providing stuff on demand now too. So if you want something just hit the demand button! Happy Hunting ;)</p>
+                </div>
+            </div>
+            </br>
         </div>
-    </div>
-    
-    <!-- Here the leave table will be placed showing all the issued leaves -->
-    <div id="live_data"></div>
-    
-</body>
+        
+        <!-- Place For Ads -->
+        <div class="container" id="ad_place">
+            <!-- Place Add no 1 -->
+            <div class="row">
+                <div class="col-xs-2">
+                    <img src="dp/1.png">
+                </div>
+                
+                <div class="col-xs-10">
+                    <h4 id="add_name_1"></h4>
+                    <p id="add_desc_1"></p>
+                </div>
+            </div>
+            </br>
+    <div class="row">
+                <div class="col-xs-2">
+                    <img src="dp/1.png">
+                </div>
+                
+                <div class="col-xs-10">
+                    <h4 id="add_name_1"></h4>
+                    <p id="add_desc_1"></p>
+                </div>
+            </div>
+            </br>
+    <div class="row">
+                <div class="col-xs-2">
+                    <img src="dp/1.png">
+                </div>
+                
+                <div class="col-xs-10">
+                    <h4 id="add_name_1"></h4>
+                    <p id="add_desc_1"></p>
+                </div>
+            </div>
+            </br>
+            <!-- Successive ads will be placed below in a similar manner -->
+        </div>
+    </body>
 </html>
+   

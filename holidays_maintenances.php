@@ -1,28 +1,61 @@
 <?php 
 require('links.php');
-require('printer_functions.php');
+
 ?>
 
 <script type="text/javascript">
 window.onload = function() {
 
-	var sobtn = document.getElementById('sob');
-	sobtn.addEventListener('click', function() { document.location.href = '/available_queries.php'; });
-	
-	var subtn = document.getElementById('sub');
-	subtn.addEventListener('click', function() { document.location.href = '/specific_user_query.php'; });
     
-    var sobtn = document.getElementById('sob');
-	sobtn.addEventListener('click', function() {
+    fetch_data();
+    
+	$(document).on('click','#rem',function(){
+        var id = [];
+        var total = 0;
+        $(':checkbox:checked').each(function(total){
+            id[total] = $(this).val();
+        });
+        
+        
         $.ajax({
-            url:"holiday_adder.php",
+            url: "holiday-remover.php",
             method:"POST",
+            data: {id:id},
+            dataType:"text",
             success:function(data){
-                $('#live_data').html(data);
+                fetch_data();
+                $('#rem').hide();
             }
         });
     });
+	
 }
+
+function selected(i){
+    var id = [];
+    var total = 0;
+    $(':checkbox:checked').each(function(total){
+        id[total] = $(this).val();
+    });
+    if(id.length > 0){
+        $('#rem').show();
+    }
+    else{
+        $('#rem').hide();
+    }
+}
+    
+    
+    function fetch_data(){
+        $("#holiday_table").empty();
+        $.ajax({
+            url: "get-holiday.php",
+            method:"POST",
+            success:function(data){
+                $('#holiday_table').html(data);
+            }
+        });
+    }
 
 
 $(document).on('click','#lvadd',function(){
@@ -30,8 +63,6 @@ $(document).on('click','#lvadd',function(){
     var name = document.getElementById("holiday_name").value;
     var from = document.getElementById("from_field").value;
     var to = document.getElementById("to_field").value;
-    console.log(from);
-    console.log(to);
       $.ajax({
           url: "holiday_adder.php",
           method:"POST",
@@ -54,28 +85,12 @@ $(document).on('click','#lvadd',function(){
 <!-- NAV -->
 	<h2 align="center">Holidays Maintenance</h2>
 	<div class = "container">
-		<div style="width: 100%;">
-			<div style="width: 100%"> 
-   		 		 
-   		 		<h3>Holidays</h3>
- 		   		<?php  print_table('holidayinfo',"",""); ?>
-			</div>		
+		<div style="width: 100%;" id="holiday_table">
+            <h3>Holidays</h3>
 		</div>
-	</div>
-    </br>
-	<div class = "container">
-		<div style="width:100%;">
-			<div style="float: left; width: 30%"> 
- 		   		<div style="float: left; width: 40%">
- 		   			<button class = "btn btn-lg btn-primary btn-block" type = "submit" name = "show_others" id = "sob">Add</button>
-				</div>
-				<div style="float: right; width: 40%"> 
-   	 				<button class = "btn btn-lg btn-primary btn-block" type = "submit" name = "specific_user" id = "sub">Remove</button>
-				</div>
-				
-			</div>
-
-		</div>
+        <div style="width: 100%">
+            <button class="btn btn-lg btn-danger" id="rem" value="Remove" style="display:none;">Remove</button>    
+        </div>
 	</div>
     </br>
 <div class="container">
