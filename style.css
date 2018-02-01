@@ -1,0 +1,22 @@
+.space {
+    float: left;
+    height: 10px;
+    width: 100%;
+}
+
+.form {
+    float: left;
+    width: 80%;
+    margin: 10px;
+}
+
+.input_text{
+    width: 30%;
+    float: left;
+    padding-right: 5%;
+}
+
+.date_picker{
+    float: left;
+    padding-right: 5%;
+}
