@@ -30,39 +30,47 @@ require('links.php');
                 }
             });
         });
-                
+        
+         
+         // This function is called when the user presses the delete button after selecting a device
+         // The device is deleted from the database
         var ambtn = document.getElementById('del');
         ambtn.addEventListener('click', function() {
-            var id=[];
-            $(':checkbox:checked').each(function(i){
-                id[i] = $(this).val();
-            });
-            if(id.length > 0){
+            id = document.querySelector('input[name="dev"]:checked').value
+            console.log(id);
+            //Confirming 
+            if(confirm("Are you Sure Want to Remove Thesese?")){
+            
                 $.ajax({
                     url:'delete_device_info.php',
                     method:'POST',
                     data:{id:id},
                     success:function(){
-                        for(var i=0;i<id.length; i++){
-                            $('tr#'+id[i]+'').css('background-coloe','#ccc');
-                            $('tr#'+id[i]+'').fadeOut('slow');
-                        }
+                        $('tr#'+id+'').css('background-color','#d64040');
+                        $('tr#'+id+'').fadeOut('slow');
                         $('#change-interface').hide();
                         $('#hid-fie').val("");
+                        $('#Device-info-table').empty();
                         fetch_data();
                     }
                 });
-            }
-            else{
-                alert("Please Select atleast one checkbox");
             }
         });
 
             var sobtn = document.getElementById('add');
             sobtn.addEventListener('click', function() { document.location.href = '/add_device.php'; });
      }
+     
+     // This function is called when a device is selected 
     function display_change(row){
+        
+        // Turn All devices backgroung white
+        $('tr').css('background-color','#ffffff');
+        
+        // For the one which is selected turn color to green
         $('tr#'+row).css('background-color','#79E08B');
+        
+        // Show the change interface
         $('#change-interface').show();
         $.ajax({
             url:"get-device-vars.php",
@@ -74,7 +82,9 @@ require('links.php');
             }
         });
     }
-         
+    
+    
+    // Function populates the required fields so to make them changeable
     function set_data(cal){
         var obj = JSON.parse(cal);
         $('#name').val(obj.employees[0].name);
@@ -86,6 +96,8 @@ require('links.php');
         $('#communication-port').val(obj.employees[0].port);
         
     }
+    
+    // This function gets all the devices from the database and populates them in teh table
     function fetch_data(){
     $.ajax({
             url:"get-device-data.php",

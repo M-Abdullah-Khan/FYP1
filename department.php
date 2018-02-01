@@ -3,7 +3,7 @@ require('links.php');
 ?>
 
 <script>
-
+var dept_selected = 0;
 function fetch_departments(){
     $.ajax(
     {
@@ -30,12 +30,12 @@ function display_employees_of_dept(id){
     
 $(document).ready(function(){
  fetch_departments();
-    $('#add_dept').click(function(){
+    $('#add_dept_btn').click(function(){
         $('#add-new-dept').show();
     });
     
     
-    $('#add_dept_now').click(function(){
+    $('#add_dept_now_btn').click(function(){
         var id=[];
          $(':checkbox:checked').each(function(i){
              id[i] = $(this).val();
@@ -47,20 +47,17 @@ $(document).ready(function(){
                  method:'POST',
                  data:{id:id,name:name},
                  success:function(){
-                     for(var i=0;i<id.length; i++){
-                         $('li#'+id[i]+'').css('background-coloe','#ccc');
-                         $('li#'+id[i]+'').fadeOut('slow');
-                     }
+                    fetch_departments(); 
                  }
              });
          }
         else{
             alert("Please Select only one checkbox");
         }
-     fetch_departments();
+     
     });
     
- $('#del_dept').click(function(){
+ $('#del_dept_btn').click(function(){
      if(confirm("Are you Sure Want to Remove Thesese?")){
          var id=[];
          $(':checkbox:checked').each(function(i){
@@ -71,10 +68,11 @@ $(document).ready(function(){
                  url:'delete-dept.php',
                  method:'POST',
                  data:{id:id},
-                 success:function(){
-                     for(var i=0;i<id.length; i++){
-                         $('li#'+id[i]+'').css('background-coloe','#ccc');
+                 success:function(data){
+                     for(var i=0; i < id.length; i++){
+                         $('li#'+id[i]+'').css('background-color','#ccc');
                          $('li#'+id[i]+'').fadeOut('slow');
+                         $('#'+id[i]+'').remove();
                      }
                  }
              });
@@ -86,20 +84,75 @@ $(document).ready(function(){
      else{
          return false;
      }
-     fetch_departments();
+     header("Location: departments.php");
  });
     
 });
+    //Show departments again after work is done
+    $(document).on('click','#show_dept_again_btn',function(){
+        $('#dep-list').show();
+        $(':checkbox:checked').attr('checked', false);
+        $('#one_dep').hide();
+        $('#show-employees').hide();
+        $('#show_dept_again_btn').hide();
+        $('#add_emp_rem_btn').show();
+        $('#add_dept_btn').show();
+        $('#del_dept_btn').show();
+    });
+    
+    
+    $(document).on('click','#rem_from_dept_btn',function(){
+        if(confirm("Are you Sure Want to Remove These from Selected Department?")){
+            var id=[];
+            $(':checkbox:checked').each(function(i){
+                id[i] = $(this).val();
+            });
+            if(id.length > 0){
+                $.ajax({
+                    url:'rem-from-dept.php',
+                    method:'POST',
+                    data:{id:id,dept_selected:dept_selected},
+                    success:function(data){
+                        for(var i=0; i < id.length; i++){
+                            $('tr#'+id[i]+'').css('background-color','#ccc');
+                            $('tr#'+id[i]+'').fadeOut('slow');
+                        }
+                        $.ajax(
+                        {
+                            url:"get-dep-emp.php",
+                            method:"POST",
+                            data:{id:dept_selected},
+                            success:function(data){
+                                $('#show-employees').html(data);
+                                $('#show-employees').show();
+                            }
+                        });
+                    }
+                });
+            }
+            else{
+                alert("Please Select atleast one checkbox");
+            }
+        }
+     else{
+         return false;
+     }
+     header("Location: departments.php");
+    });
     
     // Handling add/rem employee button functionality
-    $(document).on('click','#add_emp_rem',function(){
+    $(document).on('click','#add_emp_rem_btn',function(){
         var id=[];
          $(':checkbox:checked').each(function(i){
              id[i] = $(this).val();
          });
         if(id.length == 1){
             display_employees_of_dept(id);
+            dept_selected = id[0];
             $('#dep-list').hide();
+            $('#add_dept_btn').hide();
+            $('#del_dept_btn').hide();
+            $('#add_emp_rem_btn').hide();
             $.ajax({
                  url:'get-dept-name.php',
                  method:'POST',
@@ -110,6 +163,7 @@ $(document).ready(function(){
              });
             $(':checkbox:checked').attr('checked', false);
             $('#one_dep').show();
+            $('#show_dept_again_btn').show(); 
          }
         else{
             alert("Please Select only one checkbox to use this feature");
@@ -123,46 +177,32 @@ $(document).ready(function(){
              id[i] = $(this).val();
          });
         if(id.length == 1){
-            display_employees_of_dept(id);
+            $.ajax({
+                 url:'add-to-dep.php',
+                 method:'POST',
+                 data:{id:id, dept_selected:dept_selected},
+                 success:function(data){
+                     for(var i=0; i < id.length; i++){
+                         $('tr#'+id[i]+'').css('background-color','#ccc');
+                         $('tr#'+id[i]+'').fadeOut('slow');
+                     }
+                     $.ajax({
+                         url:"get-dep-emp.php",
+                         method:"POST",
+                         data:{id:dept_selected},
+                         success:function(data){
+                             $('#show-employees').html(data);
+                             $('#show-employees').show();
+                         }
+                     });
+                 }
+             });
          }
         else{
             alert("Please Select only one checkbox to use this feature");
         }
     });
     
-$(document).on('click','#btn-add',function(){
-    console.log('btn Click');
-    var uid = document.getElementById("uid").value;
-    var name = document.getElementById("name").value;
-    var CN = document.getElementById("CN").value;
-    var title = document.getElementById("title").value;
-    var department = document.getElementById("department").value;
-    var adminType = document.getElementById("adminType").value;
-    var mon = document.getElementById("mon").value;
-    var off_Tel = document.getElementById("off_Tel").value;
-    var email = document.getElementById("email").value;
-    var address = document.getElementById("address").value;
-    var city = document.getElementById("city").value;
-    var state = document.getElementById("state").value;
-    var nationality = document.getElementById("nationality").value;
-    var PO = document.getElementById("PO").value;
-    var FC = document.getElementById("FC").value;
-    var LFC = document.getElementById("LFC").value;
-    var RFC = document.getElementById("RFC").value;
-    var DOB = document.getElementById("DOB").value;
-    var DOE = document.getElementById("DOE").value;
-    console.log();
-      $.ajax({
-          url: "insert.php",
-          method:"POST",
-          data: {uid:uid, CN:CN, name:name, email:email, title:title, department:department, mon:mon, off_Tel:off_Tel, address:address, city:city, state:state, nationality:nationality, PO:PO, FC:FC, LFC:LFC, RFC:RFC, DOB:DOB, DOE:DOE, adminType:adminType},
-          dataType:"text",
-          success:function(data){
-              alert(data);
-              fetch_departments();
-          }
-      });
-});
 </script>
 <title>Attendence Management System</title>
       
@@ -188,16 +228,17 @@ $(document).on('click','#btn-add',function(){
                 
  		   		<h3>Options</h3>
                 <form class = "dept-options" role = "form">
-                    <button type="button" class="btn btn-danger" id="del_dept">Delete Department</button>
-                    <button type="button" class="btn btn-primary" id="add_dept">Add New Department</button>
-                    <button type="button" class="btn btn-primary" id="add_emp_rem">Add/Remove Employees to/From Department</button>
+                    <button type="button" class="btn btn-primary" id="show_dept_again_btn" style="display:none;">Show Departments</button>
+                    <button type="button" class="btn btn-danger" id="del_dept_btn">Delete Department</button>
+                    <button type="button" class="btn btn-primary" id="add_dept_btn">Add New Department</button>
+                    <button type="button" class="btn btn-primary" id="add_emp_rem_btn">Add/Remove Employees to/From Department</button>
                     
                 </form>
                 <form class="add-new-dept" role="form" style="display:none; margin:7%;" id="add-new-dept">
                     <p>To add department under super please check the super and Press Newly created ADD BUTTON. A department cannot have multiple Supers.</p>
                     
                     <span class="input_text"><input type="text" class="form-control" id="name" placeholder="Name"></span>
-                    <button type="button" class="btn btn-primary" id="add_dept_now">Add</button>
+                    <button type="button" class="btn btn-primary" id="add_dept_now_btn">Add</button>
                 </form>
 			</div>
 		</div>

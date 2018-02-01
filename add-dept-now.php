@@ -9,8 +9,12 @@ if(isset($_POST["id"])){
 else{
     $sql = "INSERT INTO `fpmsdb`.`departments` (`DID`, `Dname`, `Dsuper`) VALUES (NULL, '".$_POST["name"]."', NULL);";
 }
+
 if(mysqli_query($con,$sql)){
-    echo 'Data Inserted';
+    $sql1 = "SELECT DID FROM `fpmsdb`.`departments` WHERE Dname = '".$_POST["name"]."';";
+    $result2 = mysqli_query($con,$sql1);
+    $row = $result2->fetch_assoc();
+    echo $row['DID'];
 }
 
 ?>
